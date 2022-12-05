@@ -6,6 +6,8 @@ import {
   Param,
   Post,
   Put,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ToDoEntity } from 'src/db/db.entity';
 import { NotesDTO } from 'src/dto/create-TodoTask.dto';
@@ -16,6 +18,7 @@ export class TodoController {
   constructor(private toDoService: TodoService) {}
 
   @Post()
+  @UsePipes(ValidationPipe)
   async createToDo(@Body() data: NotesDTO): Promise<ToDoEntity> {
     const todo = this.toDoService.addToDos(data);
     return todo;

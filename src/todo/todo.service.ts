@@ -19,7 +19,7 @@ export class TodoService {
       id: uuidv4(),
       date,
       notes,
-      status: ToDostatus.Open,
+      status: ToDostatus.Completed,
     };
     await this.todorepository.insert(note);
     return note;
@@ -37,7 +37,14 @@ export class TodoService {
   }
 
   getToDoByID(id) {
-    return this.todorepository.findOneBy({ id: id });
+    return this.todorepository
+      .findOneBy({ id: id })
+      .catch((data) => {
+        return data;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   updateToDo(id: string, data: any): Promise<any> {
