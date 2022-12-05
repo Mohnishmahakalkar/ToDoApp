@@ -1,33 +1,62 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ToDoEntity } from 'src/db/db.entity';
 import { NotesDTO } from 'src/dto/create-TodoTask.dto';
-import { ToDoInterface, ToDostatus } from 'src/interfaces/ToDoList.interface';
+import { ToDostatus } from 'src/interfaces/ToDoList.interface';
 import { v4 as uuidv4 } from 'uuid';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class TodoService {
-  private todos: ToDoInterface[] = [];
-  addToDos(data: NotesDTO): ToDoInterface {
+  constructor(
+    @InjectRepository(ToDoEntity)
+    private todorepository: Repository<ToDoEntity>,
+  ) {}
+
+  async addToDos(data: NotesDTO): Promise<ToDoEntity> {
     const { date, notes } = data;
-    const note: ToDoInterface = {
+    const note: ToDoEntity = {
       id: uuidv4(),
       date,
       notes,
       status: ToDostatus.Open,
     };
-
-    this.todos.push(note);
+    await this.todorepository.insert(note);
     return note;
   }
 
-  fetchToDos() {
-    return this.todos;
+  getToDos() {
+    return this.todorepository
+      .find()
+      .catch((data) => {
+        return data;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
-  fetchNoteByID(id: string): ToDoInterface {
-    return this.todos.find((todo) => todo.id == id);
+  getToDoByID(id) {
+    return this.todorepository.findOneBy({ id: id });
   }
 
-  deleteNoteByID(id: string): void {
-    this.todos = this.todos.filter((todo) => todo.id !== id);
+  updateToDo(id: string, data: any): Promise<any> {
+    return this.todorepository
+      .createQueryBuilder()
+      .update()
+      .set({
+        notes: data.notes,
+      })
+      .where('id = :id', { id })
+      .execute();
+  }
+
+  removeToDo(id: string): Promise<any> {
+    return this.todorepository
+      .createQueryBuilder()
+      .delete()
+      .from(ToDoEntity)
+      .where('id = :id', { id })
+      .execute();
   }
 }

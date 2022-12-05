@@ -1,4 +1,4 @@
 export class NotesDTO {
-  readonly date: Date;
+  readonly date: string;
   readonly notes: string;
 }

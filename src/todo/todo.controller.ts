@@ -1,6 +1,14 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
+import { ToDoEntity } from 'src/db/db.entity';
 import { NotesDTO } from 'src/dto/create-TodoTask.dto';
-import { ToDoInterface } from 'src/interfaces/ToDoList.interface';
 import { TodoService } from './todo.service';
 
 @Controller('todo')
@@ -8,24 +16,30 @@ export class TodoController {
   constructor(private toDoService: TodoService) {}
 
   @Post()
-  async createToDo(@Body() data: NotesDTO): Promise<ToDoInterface> {
+  async createToDo(@Body() data: NotesDTO): Promise<ToDoEntity> {
     const todo = this.toDoService.addToDos(data);
     return todo;
   }
 
   @Get()
-  fetchToDo() {
-    return this.toDoService.fetchToDos();
+  async getToDos() {
+    return this.toDoService.getToDos();
   }
 
   @Get(':id')
-  async getNoteByID(@Param('id') id: string): Promise<ToDoInterface> {
-    const note: ToDoInterface = await this.toDoService.fetchNoteByID(id);
-    return note;
+  async getToDoByID(@Param() params): Promise<ToDoEntity> {
+    const { id } = params;
+    return this.toDoService.getToDoByID(id);
+  }
+
+  @Put(':id')
+  async updateToDo(@Param('id') id: string, @Body() body: any) {
+    const newCat: any = await this.toDoService.updateToDo(id, body);
+    return newCat;
   }
 
   @Delete(':id')
-  deleteNoteByID(@Param('id') id: string): void {
-    this.toDoService.deleteNoteByID(id);
+  async removeToDo(@Param('id') id: string) {
+    await this.toDoService.removeToDo(id);
   }
 }
