@@ -6,11 +6,11 @@ import {
   Param,
   Post,
   Put,
-  UsePipes,
-  ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { ToDoEntity } from 'src/db/db.entity';
 import { NotesDTO } from 'src/dto/create-TodoTask.dto';
+import { AuthGuard } from 'src/guards/auth.guard';
 import { TodoService } from './todo.service';
 
 @Controller('todo')
@@ -18,7 +18,7 @@ export class TodoController {
   constructor(private toDoService: TodoService) {}
 
   @Post()
-  @UsePipes(ValidationPipe)
+  @UseGuards(AuthGuard)
   async createToDo(@Body() data: NotesDTO): Promise<ToDoEntity> {
     const todo = this.toDoService.addToDos(data);
     return todo;
