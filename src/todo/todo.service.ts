@@ -26,6 +26,7 @@ export class TodoService {
   }
 
   getToDos() {
+    console.log(process.env.DATABASE_USER);
     return this.todorepository
       .find()
       .catch((data) => {
