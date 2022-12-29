@@ -37,8 +37,8 @@ export class TodoController {
 
   @Put(':id')
   async updateToDo(@Param('id') id: string, @Body() body: any) {
-    const newCat: any = await this.toDoService.updateToDo(id, body);
-    return newCat;
+    const todo: any = await this.toDoService.updateToDo(id, body);
+    return todo;
   }
 
   @Delete(':id')
