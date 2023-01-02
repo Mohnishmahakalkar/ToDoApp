@@ -8,7 +8,7 @@ import { TodoService } from './todo.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([ToDoEntity]),
-    JwtModule.register({ secret: '$up3r$3cr3t' }),
+    JwtModule.register({ secret: 'P@$$w0rd' }),
   ],
   controllers: [TodoController],
   providers: [TodoService],

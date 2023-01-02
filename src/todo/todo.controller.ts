@@ -1,3 +1,4 @@
+import { AutherizationGuard } from './../guards/authorization.guard';
 import {
   Body,
   Controller,
@@ -10,20 +11,21 @@ import {
 } from '@nestjs/common';
 import { ToDoEntity } from 'src/db/db.entity';
 import { NotesDTO } from 'src/dto/create-TodoTask.dto';
-import { AuthGuard } from 'src/guards/auth.guard';
+import { AuthenticationGuard } from 'src/guards/authentication.guard';
 import { TodoService } from './todo.service';
 
+@UseGuards(AuthenticationGuard)
 @Controller('todo')
 export class TodoController {
   constructor(private toDoService: TodoService) {}
 
   @Post()
-  @UseGuards(AuthGuard)
   async createToDo(@Body() data: NotesDTO): Promise<ToDoEntity> {
     const todo = this.toDoService.addToDos(data);
     return todo;
   }
 
+  @UseGuards(AutherizationGuard)
   @Get()
   async getToDos() {
     return this.toDoService.getToDos();
@@ -43,6 +45,7 @@ export class TodoController {
 
   @Delete(':id')
   async removeToDo(@Param('id') id: string) {
+    console.log('Deleete controller');
     await this.toDoService.removeToDo(id);
   }
 }
